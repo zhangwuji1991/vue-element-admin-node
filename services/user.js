@@ -1,4 +1,4 @@
-const { querySql,queryOne } = require('../db')
+const { querySql, queryOne } = require('../db')
 
 function login(username, password) {
   const sql = `select * from admin_user where username='${username}' and password='${password}'`

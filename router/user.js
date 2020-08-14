@@ -1,12 +1,26 @@
 const express = require('express')
-const { body, validationResult } = require('express-validator')
+const {
+  body,
+  validationResult
+} = require('express-validator')
 const jwt = require('jsonwebtoken')
 const boom = require('boom')
-const { PRIVATE_KEY, JWT_EXPIRED } = require('../utils/constant')
+const {
+  PRIVATE_KEY,
+  JWT_EXPIRED
+} = require('../utils/constant')
 const Result = require('../models/Result')
-const {login ,findUser} = require('../services/user')
-const {md5,decode} = require('../utils')
-const {PWD_SALT} = require('../utils/constant')
+const {
+  login,
+  findUser
+} = require('../services/user')
+const {
+  md5,
+  decode
+} = require('../utils')
+const {
+  PWD_SALT
+} = require('../utils/constant')
 const router = express.Router()
 
 //登录
@@ -16,10 +30,13 @@ router.post(
     body('username').isString().withMessage('username类型不正确'),
     body('password').isString().withMessage('password类型不正确')
   ],
-  function(req, res, next) {
+  function (req, res, next) {
     const err = validationResult(req)
+    console.log(1)
     if (!err.isEmpty()) {
-      const [{ msg }] = err.errors
+      const [{
+        msg
+      }] = err.errors
       next(boom.badRequest(msg))
     } else {
       const username = req.body.username
@@ -29,15 +46,21 @@ router.post(
           new Result('登录失败').fail(res)
         } else {
           // 生成token 
-          const token = jwt.sign({ username },PRIVATE_KEY,{ expiresIn: JWT_EXPIRED })
-          new Result({ token },'登录成功').success(res)
+          const token = jwt.sign({
+            username
+          }, PRIVATE_KEY, {
+            expiresIn: JWT_EXPIRED
+          })
+          new Result({
+            token
+          }, '登录成功').success(res)
         }
       })
     }
   })
 
 //退出
-router.get('/info', function(req, res) {
+router.get('/info', function (req, res) {
   const decoded = decode(req)
   if (decoded && decoded.username) {
     findUser(decoded.username).then(user => {
@@ -52,5 +75,7 @@ router.get('/info', function(req, res) {
     new Result('用户信息解析失败').fail(res)
   }
 })
+
+
 
 module.exports = router
